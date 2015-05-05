@@ -13,7 +13,7 @@ UNNUMBERED_MARK = '.'  # prefix to skip numbering for sections like Preface
 def setup():
     """Parse command-line args."""
     parser = argparse.ArgumentParser(description='Generate the notes outline for a book.')
-    parser.add_argument('input', type=argparse.FileType('r'), help='outline file in yaml format')
+    parser.add_argument('input', type=argparse.FileType('r'), help='metadata and table of contents file in yaml format')
     args = parser.parse_args()
     return args
 
