@@ -9,6 +9,7 @@ authors  :
     url  : http://david.heinemeierhansson.com/
 
 sections :
+  - .Authors' Note
   - .Introduction
   - The Time is Right for Remote Work
   - Dealing with Excuses
@@ -19,3 +20,4 @@ sections :
   - Life as a Remote Worker
   - .Conclusion
   - .The Remote Toolbox
+  - .Acknowledgments

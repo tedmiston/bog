@@ -47,6 +47,7 @@ authors  :
     url  : http://david.heinemeierhansson.com/
 
 sections :
+  - .Authors' Note
   - .Introduction
   - The Time is Right for Remote Work
   - Dealing with Excuses
@@ -57,6 +58,7 @@ sections :
   - Life as a Remote Worker
   - .Conclusion
   - .The Remote Toolbox
+  - .Acknowledgments
 ```
 
 *Note that chapters prefixed with a `.` will not be numbered in the output.*
@@ -72,7 +74,8 @@ by [Jason Fried](https://signalvnoise.com/writers/jf), [David Heinemeier Hansson
 
 **Table of Contents**
 
-- [Introduction](#pre1)
+- [Authors' Note](#pre1)
+- [Introduction](#pre2)
 - [1. The Time is Right for Remote Work](#ch1)
 - [2. Dealing with Excuses](#ch2)
 - [3. How to Collaborate Remotely](#ch3)
@@ -82,10 +85,18 @@ by [Jason Fried](https://signalvnoise.com/writers/jf), [David Heinemeier Hansson
 - [7. Life as a Remote Worker](#ch7)
 - [Conclusion](#post1)
 - [The Remote Toolbox](#post2)
+- [Acknowledgments](#post3)
 
 ---
 
-## <a name="pre1"></a>Introduction
+## <a name="pre1"></a>Authors' Note
+
+- TODO
+
+<sub><sup>[back to top](#)</sub></sup>
+
+
+## <a name="pre2"></a>Introduction
 
 - TODO
 
@@ -149,6 +160,13 @@ by [Jason Fried](https://signalvnoise.com/writers/jf), [David Heinemeier Hansson
 
 
 ## <a name="post2"></a>The Remote Toolbox
+
+- TODO
+
+<sub><sup>[back to top](#)</sub></sup>
+
+
+## <a name="post3"></a>Acknowledgments
 
 - TODO
 
