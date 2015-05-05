@@ -2,6 +2,8 @@
 
 Create the notes outline file for a book.
 
+I use this when I start reading a new book.  Check my [notes](https://github.com/tedmiston/notes) repo for real-life examples.
+
 ## Features
 
 - Supports one or many authors (with optional homepage urls)
