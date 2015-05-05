@@ -99,7 +99,7 @@ def generate_sections(input_file, pre_index, numbered_index, post_index):
 
     if pre_index is not None:
         for i, section in enumerate(input_file['sections'][pre_index:numbered_index]):
-            section_head_template = '<a name="pre{number}"></a>{number}. {title}'
+            section_head_template = '<a name="pre{number}"></a>{title}'
             title = section[len(UNNUMBERED_MARK):]
             section_head_frag = section_head_template.format(number=i+1, title=title)
             section_frag = section_base_template.format(section_head=section_head_frag)
@@ -113,7 +113,7 @@ def generate_sections(input_file, pre_index, numbered_index, post_index):
 
     if post_index is not None:
         for i, section in enumerate(input_file['sections'][post_index:]):
-            section_head_template = '<a name="post{number}"></a>{number}. {title}'
+            section_head_template = '<a name="post{number}"></a>{title}'
             title = section[len(UNNUMBERED_MARK):]
             section_head_frag = section_head_template.format(number=i+1, title=title)
             section_frag = section_base_template.format(section_head=section_head_frag)
