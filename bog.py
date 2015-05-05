@@ -7,7 +7,7 @@ import argparse
 import yaml
 
 
-UNNUMBERED_MARK = '.'  # prefix to skip numbering for sections like Preface
+UNNUMBERED_MARK = '.'  # prefix to hide numbering on chapters like Preface
 
 
 def setup():
@@ -54,17 +54,17 @@ def locate_section_indices(chapters):
     numbered_index = None
     post_index = None
 
-    first_section = chapters[0]
-    if first_section.startswith(UNNUMBERED_MARK):
+    first_chapter = chapters[0]
+    if first_chapter.startswith(UNNUMBERED_MARK):
         pre_index = 0
 
-    for idx, section in enumerate(chapters):
-        if not section.startswith(UNNUMBERED_MARK):
+    for idx, chapter in enumerate(chapters):
+        if not chapter.startswith(UNNUMBERED_MARK):
             numbered_index = idx
             break
 
-    for idx, section in enumerate(chapters[numbered_index:]):
-        if section.startswith(UNNUMBERED_MARK):
+    for idx, chapter in enumerate(chapters[numbered_index:]):
+        if chapter.startswith(UNNUMBERED_MARK):
             post_index = idx + numbered_index
             break
 
@@ -76,46 +76,46 @@ def generate_toc(chapters, pre_index, numbered_index, post_index):
     toc = []
 
     if pre_index is not None:
-        for i, section in enumerate(chapters[pre_index:numbered_index]):
-            title = section[len(UNNUMBERED_MARK):]
+        for i, chapter in enumerate(chapters[pre_index:numbered_index]):
+            title = chapter[len(UNNUMBERED_MARK):]
             toc.append('- [{title}](#pre{number})'.format(number=i+1, title=title))
 
-    for i, section in enumerate(chapters[numbered_index:post_index]):
-        toc.append('- [{number}. {title}](#ch{number})'.format(number=i+1, title=section))
+    for i, chapter in enumerate(chapters[numbered_index:post_index]):
+        toc.append('- [{number}. {title}](#ch{number})'.format(number=i+1, title=chapter))
 
     if post_index is not None:
-        for i, section in enumerate(chapters[post_index:]):
-            title = section[len(UNNUMBERED_MARK):]
+        for i, chapter in enumerate(chapters[post_index:]):
+            title = chapter[len(UNNUMBERED_MARK):]
             toc.append('- [{title}](#post{number})'.format(number=i+1, title=title))
 
     return '\n'.join(toc)
 
 
 def generate_sections(chapters, pre_index, numbered_index, post_index):
-    """Return the sections fragment."""
+    """Return the chapters fragment."""
     sections = []
 
     section_base_template = '## {section_head}\n\n- TODO\n\n<sub><sup>[back to top](#)</sub></sup>'
 
     if pre_index is not None:
-        for i, section in enumerate(chapters[pre_index:numbered_index]):
-            section_head_template = '<a name="pre{number}"></a>{title}'
-            title = section[len(UNNUMBERED_MARK):]
-            section_head_frag = section_head_template.format(number=i+1, title=title)
+        for i, chapter in enumerate(chapters[pre_index:numbered_index]):
+            pre_head_template = '<a name="pre{number}"></a>{title}'
+            title = chapter[len(UNNUMBERED_MARK):]
+            section_head_frag = pre_head_template.format(number=i+1, title=title)
             section_frag = section_base_template.format(section_head=section_head_frag)
             sections.append(section_frag)
 
-    for i, section in enumerate(chapters[numbered_index:post_index]):
-        section_head_template = '<a name="ch{number}"></a>{number}. {title}'
-        section_head_frag = section_head_template.format(number=i+1, title=section)
+    for i, chapter in enumerate(chapters[numbered_index:post_index]):
+        numbered_head_template = '<a name="ch{number}"></a>{number}. {title}'
+        section_head_frag = numbered_head_template.format(number=i+1, title=chapter)
         section_frag = section_base_template.format(section_head=section_head_frag)
         sections.append(section_frag)
 
     if post_index is not None:
-        for i, section in enumerate(chapters[post_index:]):
-            section_head_template = '<a name="post{number}"></a>{title}'
-            title = section[len(UNNUMBERED_MARK):]
-            section_head_frag = section_head_template.format(number=i+1, title=title)
+        for i, chapter in enumerate(chapters[post_index:]):
+            post_head_template = '<a name="post{number}"></a>{title}'
+            title = chapter[len(UNNUMBERED_MARK):]
+            section_head_frag = post_head_template.format(number=i+1, title=title)
             section_frag = section_base_template.format(section_head=section_head_frag)
             sections.append(section_frag)
 
@@ -127,16 +127,16 @@ def main():
     args = setup()
 
     input_file = yaml.load(args.input)
-    chapters = input_file['sections']
+    chapters = input_file['chapters']
 
     title = generate_title(input_file)
     authors = generate_authors(input_file)
     section_indices = locate_section_indices(chapters)
     toc = generate_toc(chapters, *section_indices)
-    sections = generate_sections(chapters, *section_indices)
+    chapters = generate_sections(chapters, *section_indices)
 
-    outline_template = '{title}\nby {authors}\n\n---\n\n**Table of Contents**\n\n{toc}\n\n---\n\n{sections}\n'
-    outline = outline_template.format(title=title, authors=authors, toc=toc, sections=sections)
+    outline_template = '{title}\nby {authors}\n\n---\n\n**Table of Contents**\n\n{toc}\n\n---\n\n{chapters}\n'
+    outline = outline_template.format(title=title, authors=authors, toc=toc, chapters=chapters)
 
     with open('output.md', 'w') as output_file:
         output_file.write(outline)

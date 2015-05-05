@@ -46,7 +46,7 @@ authors  :
   - name : David Heinemeier Hansson
     url  : http://david.heinemeierhansson.com/
 
-sections :
+chapters :
   - .Authors' Note
   - .Introduction
   - The Time is Right for Remote Work
