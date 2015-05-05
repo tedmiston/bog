@@ -33,7 +33,7 @@ $ python bog.py outlines/remote.yaml
 
 The input yaml file should look like:
 
-```
+```yaml
 title    : Remote
 subtitle : Office Not Required
 url      : http://37signals.com/remote/
@@ -61,7 +61,7 @@ sections :
 
 The output markdown file:
 
-```
+```md
 # Remote
 *Office Not Required*<br>
 by [Jason Fried](https://signalvnoise.com/writers/jf), [David Heinemeier Hansson](http://david.heinemeierhansson.com/)
