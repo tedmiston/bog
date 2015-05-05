@@ -1,0 +1,21 @@
+title    : Remote
+subtitle : Office Not Required
+url      : http://37signals.com/remote/
+
+authors  : 
+  - name : Jason Fried
+    url  : https://signalvnoise.com/writers/jf
+  - name : David Heinemeier Hansson
+    url  : http://david.heinemeierhansson.com/
+
+sections :
+  - .Introduction
+  - The Time is Right for Remote Work
+  - Dealing with Excuses
+  - How to Collaborate Remotely
+  - Beware the Dragons
+  - Hiring and Keeping the Best
+  - Managing Remote Workers
+  - Life as a Remote Worker
+  - .Conclusion
+  - .The Remote Toolbox
