@@ -8,12 +8,16 @@ import yaml
 
 
 UNNUMBERED_MARK = '.'  # prefix to hide numbering on chapters like Preface
+DEFAULT_OUTPUT_FILENAME = 'output.md'
 
 
 def setup():
     """Parse command-line args."""
     parser = argparse.ArgumentParser(description='Generate the notes outline for a book.')
     parser.add_argument('input', type=argparse.FileType('r'), help='metadata and table of contents file in yaml format')
+    parser.add_argument('-o', '--output', type=argparse.FileType('w'), required=False,
+                        default=DEFAULT_OUTPUT_FILENAME,
+                        help='output file name (default: %s)' % (DEFAULT_OUTPUT_FILENAME))
     args = parser.parse_args()
     return args
 
@@ -138,8 +142,7 @@ def main():
     outline_template = '{title}\nby {authors}\n\n---\n\n**Table of Contents**\n\n{toc}\n\n---\n\n{chapters}\n'
     outline = outline_template.format(title=title, authors=authors, toc=toc, chapters=chapters)
 
-    with open('output.md', 'w') as output_file:
-        output_file.write(outline)
+    args.output.write(outline)
 
 
 if __name__ == '__main__':
