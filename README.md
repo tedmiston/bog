@@ -24,8 +24,10 @@ $ pip install -r requirements.txt
 To generate an outline:
 
 ```
-$ python bog.py <input-file>
+$ python bog.py <input-file> [-o <output-file>]
 ```
+
+(Optionally, you can specify the output file name.)
 
 For example, to generate an outline for 37signals' wonderful book [REMOTE](http://37signals.com/remote/):
 
@@ -63,7 +65,7 @@ chapters :
 
 *Note that chapters prefixed with a `.` will not be numbered in the output.*
 
-The output markdown file:
+Generates the output markdown file `output.md`:
 
 ```md
 # Remote
