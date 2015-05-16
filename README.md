@@ -15,7 +15,7 @@ I use this when I start reading a new book.  Check my [notes](https://github.com
 
 Inside a virtual environment:
 
-```
+```bash
 $ pip install -r requirements.txt
 ```
 
@@ -23,7 +23,7 @@ $ pip install -r requirements.txt
 
 To generate an outline:
 
-```
+```bash
 $ python bog.py <input-file> [-o <output-file>]
 ```
 
@@ -31,7 +31,7 @@ $ python bog.py <input-file> [-o <output-file>]
 
 For example, to generate an outline for 37signals' wonderful book [REMOTE](http://37signals.com/remote/):
 
-```
+```bash
 $ python bog.py outlines/remote.yaml
 ```
 
