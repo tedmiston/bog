@@ -6,6 +6,8 @@ import argparse
 
 import yaml
 
+from models import Author, Chapter, Notes, Outline, Section, TableOfContents, TitleBlock
+
 
 UNNUMBERED_MARK = '.'  # prefix to hide numbering on chapters like Preface
 DEFAULT_OUTPUT_FILENAME = 'output.md'
@@ -23,128 +25,225 @@ def setup():
     return args
 
 
-def generate_title(input_file):
-    """Return title fragment."""
-    title = input_file['title']
-    subtitle = input_file['subtitle']
-    return '# {title}\n*{subtitle}*<br>'.format(title=title, subtitle=subtitle)
+class YAMLParser(object):
+    """Parse a YAML input file into native objects."""
+
+    def __init__(self, input_file):
+        self.input_file = self._load_input_file(input_file)
+
+    def _load_input_file(self, input_file):
+        return yaml.load(input_file)
+
+    def _parse_sections(self):
+        """Parse the chapters and sections they're nested in."""
+        sections = self.input_file['sections']
+        output = []
+
+        next_chapter_idx = 1  # global through all sections
+        for idx, ele in enumerate(sections):
+            if type(ele) == str:
+                if ele.startswith(UNNUMBERED_MARK):
+                    c = Chapter(name=ele[len(UNNUMBERED_MARK):])
+                else:
+                    c = Chapter(name=ele, number=next_chapter_idx)
+                    next_chapter_idx += 1
+                output.append(c)
+            elif type(ele) == dict:
+                section_chapters = []            
+                for idx2, chapter in enumerate(ele['chapters']):
+                    c = Chapter(name=chapter, number=next_chapter_idx)
+                    next_chapter_idx += 1
+                    section_chapters.append(c)
+
+                s = Section(name=ele['name'], chapters=section_chapters)
+                output.append(s)
+
+        return output
+
+    def _parse_title_block(self):
+        """Parse title, subtitle, and author(s)."""
+        title = self.input_file['title']
+        subtitle = self.input_file['subtitle']
+        authors_input = self.input_file['authors']
+        authors = [Author(i['name'], i['url']) for i in authors_input]
+
+        return TitleBlock(title=title, subtitle=subtitle, authors=authors)
+
+    def parse(self):
+        """Parse all of the sections."""
+        title_block = self._parse_title_block()
+        section_list = self._parse_sections()
+        toc = TableOfContents(section_list)
+        notes = Notes(section_list)
+
+        return Outline(title_block=title_block, table_of_contents=toc, notes=notes)
 
 
-def generate_authors(input_file):
-    """
-    Return authors fragment.
+class MarkdownWriter(object):
+    """Write native objects into a notes file in markdown format."""
 
-    Supports one or more authors, each with an optional url indicating their homepage.
-    """
-    authors = []
+    def __init__(self, outline):
+        self.outline = outline
 
-    for i in input_file['authors']:
-        name = i['name']
-        url = i['url']
-        author = '[{name}]({url})'.format(name=name, url=url) if url else name
-        authors.append(author)
+    def _write_author(self):
+        """Output a single author."""
+        pass
 
-    return ', '.join(authors)
+    def _write_title_block(self):
+        """Output the title, subtitle, and authors."""
+        pass
 
+    # def _write_section_toc(self):
+    #     """Output a section for the table of contents."""
+    #     pass
 
-def locate_section_indices(chapters):
-    """
-    Find and return indices which split the book chapters into three sections.
+    # def _write_section_outline(self):
+    #     """Output a section for the outline."""
+    #     pass
 
-    The three sections are: pre, numbered, and post chapters. Pre chapters include unnumbered
-    sections at the beginning (e.g., Preface). Numbered includes standard numbered section (e.g.,
-    Chapter 1). Post chapters include unnumbered sections at the end (e.g., Aferword).
-    """
-    pre_index = None
-    numbered_index = None
-    post_index = None
+    # def _write_chapter_toc(self):
+    #     """Output a chapter for the table of contents."""
+    #     pass
 
-    first_chapter = chapters[0]
-    if first_chapter.startswith(UNNUMBERED_MARK):
-        pre_index = 0
+    # def _write_chapter_outline(self):
+    #     """Output a chapter for the outline."""
+    #     pass
 
-    for idx, chapter in enumerate(chapters):
-        if not chapter.startswith(UNNUMBERED_MARK):
-            numbered_index = idx
-            break
+    def _write_table_of_contents(self):
+        """Output the formatted table of contents."""
+        pass
 
-    for idx, chapter in enumerate(chapters[numbered_index:]):
-        if chapter.startswith(UNNUMBERED_MARK):
-            post_index = idx + numbered_index
-            break
+    def _write_outline(self):
+        """Output the formatted outline portion of the entire document."""
+        pass
 
-    return (pre_index, numbered_index, post_index)
+    def _write_title_block(self):
+        """Output the formatted title block."""
+        pass
 
+    def write(self, output_file):
+        """Output the entire file."""
+        title_block = self.outline.title_block
+        toc = self.outline.table_of_contents
+        notes = self.outline.notes
 
-def generate_toc(chapters, pre_index, numbered_index, post_index):
-    """Return the table of contents fragment."""
-    toc = []
-
-    if pre_index is not None:
-        for i, chapter in enumerate(chapters[pre_index:numbered_index]):
-            title = chapter[len(UNNUMBERED_MARK):]
-            toc.append('- [{title}](#pre{number})'.format(number=i+1, title=title))
-
-    for i, chapter in enumerate(chapters[numbered_index:post_index]):
-        toc.append('- [{number}. {title}](#ch{number})'.format(number=i+1, title=chapter))
-
-    if post_index is not None:
-        for i, chapter in enumerate(chapters[post_index:]):
-            title = chapter[len(UNNUMBERED_MARK):]
-            toc.append('- [{title}](#post{number})'.format(number=i+1, title=title))
-
-    return '\n'.join(toc)
+        output_elements = [title_block, toc, notes]
+        output_str = '\n\n---\n\n'.join([str(i) for i in output_elements])
+        output_file.write(output_str)
 
 
-def generate_sections(chapters, pre_index, numbered_index, post_index):
-    """Return the chapters fragment."""
-    sections = []
+# def locate_indices(elements):
+#     """
+#     Find and return indices which split the top-level book chapters/sections into three groups.
 
-    section_base_template = '## {section_head}\n\n- TODO\n\n<sub><sup>[back to top](#)</sub></sup>'
+#     They are: (1) pre-chapters, (2) numbered chapters, and (3) post-chapters. Pre-chapters are
+#     unnumbered sections at the beginning (e.g., Preface). Numbered chapters are the normal ones
+#     (e.g., Chapter 1). Post-chapters are unnumbered sections at the end (e.g., Aferword).
 
-    if pre_index is not None:
-        for i, chapter in enumerate(chapters[pre_index:numbered_index]):
-            pre_head_template = '<a name="pre{number}"></a>{title}'
-            title = chapter[len(UNNUMBERED_MARK):]
-            section_head_frag = pre_head_template.format(number=i+1, title=title)
-            section_frag = section_base_template.format(section_head=section_head_frag)
-            sections.append(section_frag)
+#     Assumptions:
+#     - pre- and post-chapters aren't nested
+#     - sections are always unnumbered
+#     """
 
-    for i, chapter in enumerate(chapters[numbered_index:post_index]):
-        numbered_head_template = '<a name="ch{number}"></a>{number}. {title}'
-        section_head_frag = numbered_head_template.format(number=i+1, title=chapter)
-        section_frag = section_base_template.format(section_head=section_head_frag)
-        sections.append(section_frag)
+#     pre_idx, numbered_idx, post_idx = [None] * 3  # indices
 
-    if post_index is not None:
-        for i, chapter in enumerate(chapters[post_index:]):
-            post_head_template = '<a name="post{number}"></a>{title}'
-            title = chapter[len(UNNUMBERED_MARK):]
-            section_head_frag = post_head_template.format(number=i+1, title=title)
-            section_frag = section_base_template.format(section_head=section_head_frag)
-            sections.append(section_frag)
+#     # Are there pre-chapters?
+#     first = elements[0]
+#     if is_unnumbered(first) and is_chapter(first):
+#         pre_idx = 0
 
-    return '\n\n\n'.join(sections)
+#     for idx, ele in enumerate(elements):
+#         if is_chapter(ele):
+#             if not numbered_idx and is_numbered(ele):
+#                 numbered_idx = idx
+#         elif is_section(ele):
+#             chapters_in_section = ele['chapters']
+#             for idx2, chapter in enumerate(chapters_in_section):
+#                 if not numbered_idx and is_numbered(chapter):
+#                     numbered_idx = [idx, idx2]  # section index, chapter index
+
+#     if type(numbered_idx) == list:
+#         remaining = elements[numbered_idx[0]:]
+#     elif type(numbered_idx) == int:
+#         remaining = elements[numbered_idx:]
+
+#     for idx, ele in enumerate(remaining):
+#         if is_chapter(ele):
+#             if not post_idx and is_unnumbered(ele):
+#                 post_idx = idx + numbered_idx
+#         elif is_section(ele):
+#             chapters_in_section = ele['chapters']
+#             for idx2, chapter in enumerate(chapters_in_section):
+#                 if not post_idx and is_numbered(chapter):
+#                     post_idx = [idx + numbered_idx, idx2]
+
+#     print (pre_idx, numbered_idx, post_idx)
+#     import pdb ; pdb.set_trace()
+
+#     return (pre_idx, numbered_idx, post_idx)
+
+
+# def generate_toc(chapters, pre_index, numbered_index, post_index):
+#     """Return the table of contents fragment."""
+#     toc = []
+
+#     if pre_index is not None:
+#         for i, chapter in enumerate(chapters[pre_index:numbered_index]):
+#             title = chapter[len(UNNUMBERED_MARK):]
+#             toc.append('- [{title}](#pre{number})'.format(number=i+1, title=title))
+
+#     for i, chapter in enumerate(chapters[numbered_index:post_index]):
+#         toc.append('- [{number}. {title}](#ch{number})'.format(number=i+1, title=chapter))
+
+#     if post_index is not None:
+#         for i, chapter in enumerate(chapters[post_index:]):
+#             title = chapter[len(UNNUMBERED_MARK):]
+#             toc.append('- [{title}](#post{number})'.format(number=i+1, title=title))
+
+#     return '\n'.join(toc)
+
+
+# def generate_sections(chapters, pre_index, numbered_index, post_index):
+#     """Return the chapters fragment."""
+#     sections = []
+
+#     section_base_template = '## {section_head}\n\n- TODO\n\n<sub><sup>[back to top](#)</sub></sup>'
+
+#     if pre_index is not None:
+#         for i, chapter in enumerate(chapters[pre_index:numbered_index]):
+#             pre_head_template = '<a name="pre{number}"></a>{title}'
+#             title = chapter[len(UNNUMBERED_MARK):]
+#             section_head_frag = pre_head_template.format(number=i+1, title=title)
+#             section_frag = section_base_template.format(section_head=section_head_frag)
+#             sections.append(section_frag)
+
+#     for i, chapter in enumerate(chapters[numbered_index:post_index]):
+#         numbered_head_template = '<a name="ch{number}"></a>{number}. {title}'
+#         section_head_frag = numbered_head_template.format(number=i+1, title=chapter)
+#         section_frag = section_base_template.format(section_head=section_head_frag)
+#         sections.append(section_frag)
+
+#     if post_index is not None:
+#         for i, chapter in enumerate(chapters[post_index:]):
+#             post_head_template = '<a name="post{number}"></a>{title}'
+#             title = chapter[len(UNNUMBERED_MARK):]
+#             section_head_frag = post_head_template.format(number=i+1, title=title)
+#             section_frag = section_base_template.format(section_head=section_head_frag)
+#             sections.append(section_frag)
+
+#     return '\n\n\n'.join(sections)
 
 
 def main():
     """Create the outline file from a template file."""
     args = setup()
+    in_, out = args.input, args.output
 
-    input_file = yaml.load(args.input)
-    chapters = input_file['chapters']
+    p = YAMLParser(input_file=in_)
+    outline = p.parse()
 
-    title = generate_title(input_file)
-    authors = generate_authors(input_file)
-    section_indices = locate_section_indices(chapters)
-    toc = generate_toc(chapters, *section_indices)
-    chapters = generate_sections(chapters, *section_indices)
-
-    outline_template = \
-        '{title}\nby {authors}\n\n---\n\n**Table of Contents**\n\n{toc}\n\n---\n\n{chapters}\n'
-    outline = outline_template.format(title=title, authors=authors, toc=toc, chapters=chapters)
-
-    args.output.write(outline)
+    w = MarkdownWriter(outline=outline)
+    w.write(output_file=out)
 
 
 if __name__ == '__main__':

@@ -1,0 +1,33 @@
+title    : The Power of Less
+subtitle : The fine art of limiting yourself to the essential... in business and in life
+url      : http://thepowerofless.com/
+
+authors  : 
+  - name : Leo Babauta
+    url  : http://leobabauta.com/
+
+sections :
+  - .Introduction
+  - name     : 'Part I: The Principles'
+    chapters :
+      - Why Less is Powerful
+      - The Art of Setting Limits
+      - 'Choosing the Essential, and Simplifying'
+      - Simple Focus
+      - 'Create New Habits, and the Power of Less Challenge'
+      - Start Small
+  - name     : 'Part II: In Practice'
+    chapters :
+      - Simple Goals and Projects
+      - Simple Tasks
+      - Simple Time Management
+      - Simple Email
+      - Simple Internet
+      - Simple Filing
+      - Simple Commitments
+      - Simple Daily Routine
+      - Declutter Your Work Space
+      - Slow Down
+      - Simple Health and Fitness
+      - On Motivation
+  - .Acknowledgments
