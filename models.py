@@ -1,8 +1,10 @@
 """
-All of the data containers.
+All of the data containers related to books and outlines.
 """
 
 class Author(object):
+    """The person who wrote the book and their presence on the interwebs."""
+
     def __init__(self, name, url=None):
         self.name = name
         self.url = url
@@ -12,6 +14,8 @@ class Author(object):
 
 
 class TitleBlock(object):
+    """The book title, subtitle, and authors."""
+
     def __init__(self, title, subtitle, authors):
         self.title = title
         self.subtitle = subtitle
@@ -23,6 +27,8 @@ class TitleBlock(object):
 
 
 class Section(object):
+    """A portion of the book containing chapters."""
+
     def __init__(self, name, chapters):
         self.name = name
         self.chapters = chapters
@@ -32,6 +38,8 @@ class Section(object):
 
 
 class Chapter(object):
+    """One book chapter."""
+
     def __init__(self, name, number=None):
         self.name = name
         self.number = number
@@ -77,7 +85,7 @@ class Notes(object):
 
 
 class Outline(object):
-    """The whole thing!"""
+    """A container for all parts of the book outline."""
 
     def __init__(self, title_block, table_of_contents, notes):
         self.title_block = title_block
