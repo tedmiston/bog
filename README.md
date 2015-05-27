@@ -178,3 +178,11 @@ by [Jason Fried](https://signalvnoise.com/writers/jf), [David Heinemeier Hansson
 Then replace TODOs with your notes as you read.
 
 You can use the outline files provided in `outlines` or follow their syntax to create your own (pull requests welcome).
+
+## Tests
+
+To run all tests:
+
+```bash
+$ python -m unittest discover
+```
