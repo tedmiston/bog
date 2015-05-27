@@ -41,15 +41,15 @@ class YAMLParser(object):
 
         next_chapter_idx = 1  # global through all sections
         for idx, ele in enumerate(sections):
-            if type(ele) == str:
+            if isinstance(ele, str):
                 if ele.startswith(UNNUMBERED_MARK):
                     c = Chapter(name=ele[len(UNNUMBERED_MARK):])
                 else:
                     c = Chapter(name=ele, number=next_chapter_idx)
                     next_chapter_idx += 1
                 output.append(c)
-            elif type(ele) == dict:
-                section_chapters = []            
+            elif isinstance(ele, dict):
+                section_chapters = []
                 for idx2, chapter in enumerate(ele['chapters']):
                     c = Chapter(name=chapter, number=next_chapter_idx)
                     next_chapter_idx += 1
@@ -115,10 +115,6 @@ class MarkdownWriter(object):
 
     def _write_outline(self):
         """Output the formatted outline portion of the entire document."""
-        pass
-
-    def _write_title_block(self):
-        """Output the formatted title block."""
         pass
 
     def write(self, output_file):
