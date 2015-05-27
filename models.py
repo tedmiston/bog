@@ -6,6 +6,16 @@ class Author(object):
     """The person who wrote the book and their presence on the interwebs."""
 
     def __init__(self, name, url=None):
+        if not isinstance(name, str):
+            raise TypeError
+        if len(name) == 0:
+            raise ValueError
+
+        if not isinstance(url, str) and url is not None:
+            raise TypeError
+        if isinstance(url, str) and len(url) == 0:
+            raise ValueError
+
         self.name = name
         self.url = url
 
