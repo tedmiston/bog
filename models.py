@@ -22,8 +22,10 @@ class TitleBlock(object):
         self.authors = authors
 
     def __str__(self):
-        s = '# {title}\n*{subtitle}*<br>\nby {authors}'.format(title=self.title, subtitle=self.subtitle,authors=', '.join([str(a) for a in self.authors]))
-        return s
+        authors_str = ', '.join([str(a) for a in self.authors])
+        return '# {title}\n*{subtitle}*<br>\nby {authors}'.format(title=self.title,
+                                                                  subtitle=self.subtitle,
+                                                                  authors=authors_str)
 
 
 class Section(object):
@@ -45,11 +47,8 @@ class Chapter(object):
         self.number = number
 
     def __str__(self):
-        if self.number is not None:
-            s = '{}. {}'.format(self.number, self.name)
-        else:
-            s = '{}'.format(self.name)
-        return s
+        number_str = '{}. '.format(self.number) if self.number else ''
+        return '{}{}'.format(number_str, self.name)
 
 
 class TableOfContents(object):
@@ -59,9 +58,9 @@ class TableOfContents(object):
     def __str__(self):
         s = '**Table of Contents**\n\n'
         for ele in self.sections:
-            if type(ele) is Chapter:
+            if isinstance(ele, Chapter):
                 s += '- {}\n'.format(ele)
-            elif type(ele) is Section:
+            elif isinstance(ele, Section):
                 s += '- {}\n'.format(ele)
                 for c in ele.chapters:
                     s += '  - {}\n'.format(c)
@@ -75,9 +74,9 @@ class Notes(object):
     def __str__(self):
         s = ''
         for ele in self.sections:
-            if type(ele) is Chapter:
+            if isinstance(ele, Chapter):
                 s += '## {name}\n\n- TODO\n\n'.format(name=str(ele))
-            elif type(ele) is Section:
+            elif isinstance(ele, Section):
                 s += '## {name}\n\n'.format(name=str(ele))
                 for c in ele.chapters:
                     s += '### {name}\n\n- TODO\n\n'.format(name=str(c))
